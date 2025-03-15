@@ -12,7 +12,7 @@ import { useState } from "react";
 import { v4 as uuid } from "uuid";
 // import { InstagramEmbed } from "react-social-media-embed";
 
-export default function ViewReource({
+export default function ViewResource({
   resource,
   embedKey,
 }: {

@@ -1,6 +1,10 @@
-import { forwardRef, Ref } from "react";
+"use client";
+
+import { forwardRef, Ref, useState } from "react";
 import AsyncSelect from "react-select/async";
 import { FormPostErrors } from "./form/form-errors";
+import { twMerge } from "tailwind-merge";
+import { v4 as uuid } from "uuid";
 
 const customStyles = {
   control: (provided: any, state: any) => ({
@@ -45,29 +49,50 @@ const customStyles = {
   }),
 };
 
+type DropdownOption = {
+  label: string;
+  value: string;
+};
+
 interface DropdownProps {
   id: string;
+  key?: string;
   label: string;
+  disabled?: boolean;
   placeholder?: string;
-  options: { label: string; value: string }[];
-  defaultValue?: { label: string; value: string };
+  options: DropdownOption[];
+  defaultValue?: DropdownOption;
   errors?: Record<string, string[] | undefined>;
-  getOptionsAsync?: (
-    filter?: string
-  ) => Promise<{ label: string; value: string }[]>;
+  getOptionsAsync?: (filter?: string) => Promise<DropdownOption[]>;
+  className?: string;
 }
 
 export const Dropdown = forwardRef<any, DropdownProps>(
   (
-    { id, label, placeholder, options, defaultValue, errors, getOptionsAsync },
+    {
+      id,
+      key,
+      label,
+      disabled = false,
+      placeholder,
+      options,
+      defaultValue,
+      errors,
+      getOptionsAsync,
+      className,
+    },
     ref
   ) => {
+    const [option, setOption] = useState<DropdownOption | {}>(
+      defaultValue || {}
+    );
     const loadOptions = async (filter: string) => {
       try {
-        if (options && options.length > 0)
+        if (options && options.length > 0) {
           return options.filter((optn) =>
             optn.label.toLowerCase().includes(filter.toLowerCase())
           );
+        }
         if (!getOptionsAsync) return [];
 
         const data = await getOptionsAsync(filter);
@@ -79,28 +104,21 @@ export const Dropdown = forwardRef<any, DropdownProps>(
     };
 
     return (
-      <div className="flex flex-col w-1/2 gap-1">
-        <h3 className="text-sm font-semibold text-neutral-500">{label}</h3>
-        {/* <select
-          className="flex h-9 w-full  border border-input py-1  shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:ring-none rounded-lg border-none bg-primary/5 px-4 text-base focus:outline-none"
-          id={id}
-          name={id}
-          ref={ref}
-          // defaultValue={defaultValue ? defaultValue : options[0]?.value}
-        >
-          {options.map((optn) => (
-            <option value={optn.value}>{optn.label}</option>
-          ))}
-        </select> */}
+      <div className={twMerge("flex flex-col", className)} key={key}>
+        <h3 className="text-sm font-semibold text-neutral-500 p-0">{label}</h3>
         <AsyncSelect
           id={id}
           name={id}
           ref={ref}
+          key={key || uuid()}
+          isDisabled={disabled}
           placeholder={placeholder}
           cacheOptions
           defaultOptions
           loadOptions={loadOptions}
-          defaultValue={defaultValue}
+          defaultValue={option}
+          onChange={(obj) => setOption(obj as DropdownOption)}
+          isClearable={true}
           styles={customStyles}
           className="border-none"
         />

@@ -37,7 +37,6 @@ export const FormPostErrors = ({ id, errors }: FormErrorsProps) => {
 
 export const FormError = ({ error }: { error: string | undefined }) => {
   if (!error) return null;
-  console.log("form level error :::::::::: ", error);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

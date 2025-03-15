@@ -16,7 +16,7 @@ import { getResourceById } from "@/actions/resource";
 import { FormError } from "@/components/form/form-errors";
 import { InstagramEmbed } from "react-social-media-embed";
 import { twMerge } from "tailwind-merge";
-import ViewReource from "@/components/resource/ViewResource";
+import ViewResource from "@/components/resource/ViewResource";
 import { useResources } from "@/store/resources";
 import { ResourceType } from "@/actions/resource/schema";
 import ReadMore from "@/components/ui/Readmore";
@@ -38,15 +38,11 @@ export default function ResourceModal() {
   const { execute, error, data, isLoading, setData } =
     useAction(getResourceById);
 
-  console.log("Inside intercepting route ====== ");
-
   useEffect(() => {
     const currentResource = resources.find((res) => res.id === id);
     if (currentResource) {
-      console.log("found resource in state ", currentResource);
       setData(currentResource);
     } else {
-      console.log("Using id in use efff to fetch ", id);
       execute(id)
         .then((res) => {
           console.log("done fetching", res);
@@ -79,9 +75,8 @@ export default function ResourceModal() {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    console.log("Form data in edit modak", formData);
 
-    // await execute(Object.fromEntries(formData.entries()) as any);
+    await execute(Object.fromEntries(formData.entries()) as any);
   };
   console.log("isNextResourcePresent(1) ========= ", isNextResourcePresent(1));
   console.log(
@@ -150,7 +145,7 @@ export default function ResourceModal() {
                   </Button>
                 </div>
                 {/* <FormError error={error} /> */}
-                {/* <ViewReource id={id}/> */}
+                {/* <ViewResource id={id}/> */}
                 {/* <div className="flex flex-col md:flex-row">
                   {data && (
                     <>
@@ -177,7 +172,7 @@ export default function ResourceModal() {
                   )}
 
                 </div> */}
-                {data && <ViewReource resource={data} embedKey={embedKey} />}
+                {data && <ViewResource resource={data} embedKey={embedKey} />}
 
                 {!data && <SocialSkeleton />}
 

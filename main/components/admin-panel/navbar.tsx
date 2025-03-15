@@ -25,7 +25,6 @@ interface NavbarProps {
 export function Navbar({ title }: NavbarProps) {
   const openModal = useModalState((state) => state.openModal);
   const params = useParams();
-  console.log("Inside navbar params :::::::::::::::: ", params);
   return (
     // <header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
     <header className="sticky top-0 z-10 w-full bg-[--white] shadow  dark:shadow-secondary">
@@ -64,7 +63,7 @@ export function Navbar({ title }: NavbarProps) {
                   onClick={() => {
                     // onOpen();
                     // setIsModalOpen(true);
-                    openModal(ModalType.NEW_RESOURCE);
+                    openModal({ type: ModalType.NEW_RESOURCE });
                     console.log("onpend modal");
                   }}
                 >
@@ -75,7 +74,7 @@ export function Navbar({ title }: NavbarProps) {
                   onClick={() => {
                     // onOpen();
                     // setIsModalOpen(true);
-                    openModal(ModalType.NEW_RESOURCE_GROUP);
+                    openModal({ type: ModalType.NEW_RESOURCE_GROUP });
                     console.log("onpend modal");
                   }}
                 >

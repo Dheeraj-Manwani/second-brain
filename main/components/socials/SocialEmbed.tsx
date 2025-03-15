@@ -13,12 +13,12 @@ export const SocialEmbed = ({
   type,
   url,
   coverImageUrl,
-  key,
+  key = "social_embedded_key",
 }: {
   type: ResourceTypeEnumType;
   url: string;
   coverImageUrl?: string;
-  key: string;
+  key?: string;
 }) => {
   switch (type) {
     case ResourceTypeSchema.INSTAGRAM_REEL:

@@ -7,6 +7,7 @@ import {
   ResourceTypeEnum,
   ResourceTypeEnumType,
 } from "@/actions/resource/schema";
+import { ResourceGroupType } from "@/actions/resourceGroup/schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,7 +61,10 @@ export const messagesEnum = {
 };
 
 export const getResourceType = (url: string): ResourceTypeEnumType => {
-  if (url.includes("youtube.com") || url.includes("youtu.be")) {
+  if (
+    (url.includes("youtube.com") || url.includes("youtu.be")) &&
+    !url.includes("posts")
+  ) {
     return "YOUTUBE_VIDEO";
   }
   if (url.includes("instagram.com/reel")) {
@@ -90,3 +94,19 @@ export const getApplicatinoName = (resourceType: ResourceTypeEnumType) => {
       return "App";
   }
 };
+
+export const getResourceGroupOptions = (
+  resourceGroups: ResourceGroupType[]
+) => {
+  const resourceGroupOptions = resourceGroups.map((rg) => {
+    return { label: rg.title, value: rg.id, type: rg.type };
+  });
+  return resourceGroupOptions.sort((a, b) =>
+    a.type === "DEFAULT" ? -1 : b.type === "DEFAULT" ? 1 : 0
+  );
+};
+
+export const visibilityDropdownOptions = [
+  { label: "Public ", value: "PUBLIC" },
+  { label: "Private", value: "PRIVATE" },
+];

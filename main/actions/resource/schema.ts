@@ -21,6 +21,17 @@ export const ResourceInput = z.object({
   resourceGroupId: z.string().min(1, "Select a resource group."),
 });
 
+export const UpdateResourceInput = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required.")
+    .max(250, "Title can take upto a max of 250 characters."),
+  id: z.string().min(1, "Resource ID is required."),
+  description: z.string().optional(),
+  resourceGroupId: z.string().min(1, "Select a resource group."),
+  visibility: VisibilityEnum,
+});
+
 export const ResourceTypeEnum = z.enum([
   "YOUTUBE_VIDEO",
   "INSTAGRAM_POST",
@@ -44,11 +55,18 @@ export const ResourceSchema = z.object({
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date(),
   resourceStorage: z.object({ s3Url: z.string() }).optional().nullable(),
+  resourceGroup: z.object({ title: z.string() }).optional().nullable(),
 });
 
 export type ResourceInputType = z.infer<typeof ResourceInput>;
 export type ResourceType = z.infer<typeof ResourceSchema>;
 export type ReturnTypeCreateResource = ActionState<
   ResourceInputType,
+  ResourceType
+>;
+
+export type ResourceUpdateType = z.infer<typeof UpdateResourceInput>;
+export type ReturnTypeUpdateResource = ActionState<
+  ResourceUpdateType,
   ResourceType
 >;

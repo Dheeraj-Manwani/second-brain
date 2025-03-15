@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +21,7 @@ import { ResourceType, ResourceTypeEnumType } from "@/actions/resource/schema";
 import { getApplicatinoName } from "@/lib/utils";
 import Link from "next/link";
 import { VisibilityType } from "@/actions/types";
+import { ModalType, useModalState } from "@/store/modal";
 
 export function ResourceDropdown({
   resource,
@@ -29,6 +32,8 @@ export function ResourceDropdown({
   resourceGroupSlug: string;
   changeVisibility: (resourceId: string, type: VisibilityType) => void;
 }) {
+  const openModal = useModalState((state) => state.openModal);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -73,7 +78,12 @@ export function ResourceDropdown({
               </>
             )}
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer flex justify-between">
+          <DropdownMenuItem
+            className="cursor-pointer flex justify-between"
+            onClick={() =>
+              openModal({ type: ModalType.EXISTING_RESOURCE, data: resource })
+            }
+          >
             Edit <Pencil />
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer  hover:bg-red-400 flex justify-between">

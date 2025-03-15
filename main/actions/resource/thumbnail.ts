@@ -55,7 +55,6 @@ const getTitleForYoutube = (content: string): string | null | undefined => {
   const doc = dom.window.document;
 
   const title = doc.querySelector("title")?.textContent;
-  // console.log("Title:", title);
 
   return title;
 };

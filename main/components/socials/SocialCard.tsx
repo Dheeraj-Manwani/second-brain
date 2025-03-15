@@ -129,6 +129,13 @@ export function SocialCard({ resource }: { resource: ResourceType }) {
     const currentResource = resources.find((r) => r.id === resource.id);
     return currentResource ? currentResource.visibility : resource.visibility;
   };
+
+  // const getCurrentResourceFromState = (id: string): ResourceType => {
+  let currentResourceFromState = resources.find((r) => r.id === resource.id);
+  currentResourceFromState = currentResourceFromState
+    ? currentResourceFromState
+    : resource;
+  // };
   return (
     <Card
       className={twMerge("w-[250px] h-min rounded-xl mr-3 mt-3 relative")}
@@ -200,7 +207,7 @@ export function SocialCard({ resource }: { resource: ResourceType }) {
           {resource.title.length > 30 ? (
             <>
               <TooltipTrigger className="cursor-default">
-                <CardTitle className="text-left">
+                <CardTitle className="text-left w-[195px] overflow-hidden">
                   {resource.title.substring(0, 30) + "..."}
                 </CardTitle>
               </TooltipTrigger>

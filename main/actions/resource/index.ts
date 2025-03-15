@@ -5,7 +5,10 @@ import {
   ResourceInput,
   ResourceInputType,
   ResourceSchema,
+  ResourceUpdateType,
   ReturnTypeCreateResource,
+  ReturnTypeUpdateResource,
+  UpdateResourceInput,
 } from "./schema";
 import db from "@/db";
 import { getServerSession } from "next-auth";
@@ -13,9 +16,7 @@ import { authConfig, session } from "@/lib/auth";
 import { getResourceType, messagesEnum } from "@/lib/utils";
 import { ResourceType } from "@/actions/resource/schema";
 import { generateThumbnail } from "./thumbnail";
-import { ResourceGroupType } from "../resourceGroup/schema";
 import { VisibilityType } from "../types";
-import { error } from "console";
 
 async function getOrder() {
   const highestOrder = await db.resource.findFirst({
@@ -64,6 +65,29 @@ const createResourceHandler = async (
           },
         }),
       },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        order: true,
+        url: true,
+        resourceGroupId: true,
+        description: true,
+        metadata: true,
+        visibility: true,
+        createdAt: true,
+        updatedAt: true,
+        resourceStorage: {
+          select: {
+            s3Url: true,
+          },
+        },
+        resourceGroup: {
+          select: {
+            title: true,
+          },
+        },
+      },
     });
 
     return { data: res };
@@ -72,6 +96,38 @@ const createResourceHandler = async (
     return { error: "Failed to create resource" };
   }
 };
+
+const updateResourceHandler = async (
+  resource: ResourceUpdateType
+): Promise<ReturnTypeUpdateResource> => {
+  // @ts-ignore
+  const session: session | null = await getServerSession(authConfig);
+
+  if (!session || !session?.user?.id) {
+    return { error: messagesEnum.UNAUTHORISED };
+  }
+  try {
+    const res = await db.resource.update({
+      data: {
+        title: resource.title,
+        visibility: resource.visibility,
+        description: resource.description,
+        resourceGroupId: resource.resourceGroupId,
+      },
+      where: {
+        id: resource.id,
+        userId: session.user.id,
+      },
+    });
+
+    return { data: res };
+  } catch (e) {
+    console.log("Error occured while updating a resource", e);
+    return { error: "Failed to update the resource " + resource.id };
+  }
+};
+
+const deleteResourceHandler = async (resourceId: string) => {};
 
 // TODO: Add Pagination
 export const getResources = async (
@@ -102,6 +158,11 @@ export const getResources = async (
       resourceStorage: {
         select: {
           s3Url: true,
+        },
+      },
+      resourceGroup: {
+        select: {
+          title: true,
         },
       },
     },
@@ -165,6 +226,11 @@ export const getResourceById = async (
           s3Url: true,
         },
       },
+      resourceGroup: {
+        select: {
+          title: true,
+        },
+      },
     },
     where: {
       // userId,
@@ -215,4 +281,9 @@ export const changeResourceVisibility = async ({
 export const createResource = createSafeAction(
   ResourceInput,
   createResourceHandler
+);
+
+export const updateResource = createSafeAction(
+  UpdateResourceInput,
+  updateResourceHandler
 );

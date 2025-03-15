@@ -1,13 +1,14 @@
 "use client";
 
 import { createResource } from "@/actions/resource";
-import { ResourceInput } from "@/actions/resource/schema";
+import { ResourceInput, ResourceType } from "@/actions/resource/schema";
 import { useAction } from "@/hooks/useAction";
-import { ModalType, useModalState } from "@/store/modal";
+import { ModalData, ModalType, useModalState } from "@/store/modal";
 // import { useRouter } from "next/router";
 import { useRef } from "react";
 import { FormModal } from "./FormModal";
 import {
+  EditResourceForm,
   NewResourceForm,
   NewResourceGroupForm,
 } from "../resource/ResourceForms";
@@ -18,15 +19,17 @@ import { createResourceGroup } from "@/actions/resourceGroup";
 
 const getForm = (
   modalType: ModalType | undefined,
-  error: string | undefined,
-  fieldErrors: FieldErrors<any> | undefined
+  modalData: ModalData,
+  key: string
 ) => {
   switch (modalType) {
     case ModalType.NEW_RESOURCE:
-      // return <NewResourceForm error={error} fieldErrors={fieldErrors} />;
-      return <NewResourceForm />;
+      return <NewResourceForm key={key} />;
+    case ModalType.EXISTING_RESOURCE:
+      return (
+        <EditResourceForm resource={modalData as ResourceType} key={key} />
+      );
     case ModalType.NEW_RESOURCE_GROUP:
-      // return <NewResourceGroupForm error={error} fieldErrors={fieldErrors} />;
       return <NewResourceGroupForm />;
     default:
       <div>Form not found</div>;
@@ -36,7 +39,9 @@ const getForm = (
 export const GenericForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const modalType = useModalState((state) => state.type);
-  // const serverAction = getServerAction(modalType);
+  const modalData = useModalState((state) => state.data);
+  const modalKey = useModalState((state) => state.key);
+
   const closeModal = useModalState((state) => state.closeModal);
   const router = useRouter();
 
@@ -70,11 +75,10 @@ export const GenericForm = () => {
   };
   return (
     <FormModal
-      // onSubmit={onSubmit}
-      title="New Resource form modal"
-      // formRef={formRef}
+    // onSubmit={onSubmit}
+    // formRef={formRef}
     >
-      {getForm(modalType, error, fieldErrors)}
+      {getForm(modalType, modalData || {}, modalKey)}
     </FormModal>
   );
 };

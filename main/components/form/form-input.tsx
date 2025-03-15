@@ -44,7 +44,7 @@ export const FormPostInput = forwardRef<HTMLInputElement, FormInputProps>(
     const { pending } = useFormStatus();
 
     return (
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col">
         <div className="w-full">
           {label ? (
             <Label
